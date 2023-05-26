@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ask a Question</title>
+</head>
+<body>
+    <h1>Ask a Question</h1>
+    <form id="question-form">
+        <label for="question-input">Enter your question:</label>
+        <textarea id="question-input" name="question" rows="5"></textarea>
+        <button type="submit">Ask</button>
+    </form>
+    <div id="answer-container"></div>
+    <script>
+        const form = document.querySelector("#question-form");
+        const input = document.querySelector("#question-input");
+        const answerContainer = document.querySelector("#answer-container");
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            const question = input.value;
+            const url = 'http://127.0.0.1:8000/answer';
+        
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const answer = data.answer;
+                answerContainer.innerHTML = `<p><strong>Question:</strong> ${data.question}</p><p><strong>Answer:</strong> ${answer}</p>`;
+            })
+            .catch(error => {
+                console.error(error);
+                answerContainer.innerHTML = "<p>An error occurred. Please try again.</p>";
+            });
+        });
+    </script>
+</body>
+</html>
