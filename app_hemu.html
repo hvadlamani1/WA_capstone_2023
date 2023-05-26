@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Westford Academy Handbook Q&A</title>
+</head>
+<body>
+  <h1>Westford Academy Handbook Q&A</h1>
+
+  <form action="/submit_question" method="POST">
+    <label for="question">Ask a question:</label><br>
+    <input type="text" id="question" name="question" required><br><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <h2>Answer:</h2>
+  <p id="answer"></p>
+
+  <script>
+    const form = document.querySelector('form');
+    const answerElement = document.getElementById('answer');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const question = document.getElementById('question').value;
+      const url = 'http://127.0.0.1:8000/answer'
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question })
+      })
+      .then(response => response.json())
+      .then(data => {
+        answerElement.textContent = data.answer;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
