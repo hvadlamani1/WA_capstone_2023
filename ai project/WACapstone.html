@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZoomInfo Capstone Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: #333;
+        }
+
+        #waitIcon {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            visibility: hidden;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Style for the form container */
+        #question-form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style for the label */
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Style for the textarea */
+        textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        /* Style for the submit button */
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Style for the answer container */
+        #answer-container {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style for the answer text */
+        .answer-text {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1><img src="images/zoominfo.png" alt="ZoomInfo Logo" style="vertical-align: middle; height: 40px;"> Zoom Info Capstone Project</h1>
+    <img id="waitIcon" src="images/hourglass.gif" alt="Loading..." />
+    <form id="question-form">
+        <label>Ask a question:</label>
+        <textarea id="question-input" name="question" rows="5"></textarea>
+        <button type="submit">Ask</button>
+    </form>
+    <div id="answer-container"></div>
+    <script>
+        const form = document.querySelector("#question-form");
+        const input = document.querySelector("#question-input");
+        const answerContainer = document.querySelector("#answer-container");
+        const waitIcon = document.getElementById('waitIcon');
+    
+        form.addEventListener("submit", event => {
+            event.preventDefault();
+            const question = input.value;
+            const url = 'http://127.0.0.1:8000/wa_answer';
+            waitIcon.style.visibility='visible';
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin" : "*"
+                    
+                },
+                body: JSON.stringify({ question })
+                
+            })
+            .then(response => response.json())
+            .then(data => {
+                const answer = data.answer;
+                answerContainer.innerHTML = `<p><strong>Question:</strong> ${data.question}</p><p><strong>Answer:</strong> ${answer}</p>`;
+                waitIcon.style.visibility='hidden';
+            })
+            .catch(error => {
+                console.error(error);
+                answerContainer.innerHTML = "<p>An error occurred. Please try again.</p>";
+            });
+        });
+    </script>
+</body>
+</html>
